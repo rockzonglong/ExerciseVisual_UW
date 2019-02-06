@@ -1,0 +1,286 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+link="https://github.com/rockzonglong/VisualAnalytics_2_tabularData/raw/master/data/Tableau%20Applicable%20Annual%20Report%201.csv"
+```
+
+```{r}
+mydata=read.csv(link)
+```
+
+```{r}
+names(mydata)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+table(mydata$Repeat.Donor)
+```
+
+```{r}
+absoluteT=table(mydata$Repeat.Donor)
+prop.table(absoluteT)
+TABLE=prop.table(absoluteT)
+```
+
+```{r}
+percentage=prop.table(absoluteT)
+pie(percentage)
+```
+```{r}
+table(mydata$Repeat.Donor)
+```
+
+```{r}
+names(TABLE)
+```
+
+```{r}
+names(TABLE)[1]="N/A"
+```
+
+```{r}
+names(TABLE)
+```
+```{r}
+TABLE
+```
+```{r}
+pie(TABLE)
+```
+```{r}
+TABLE=TABLE*100
+```
+
+```{r}
+TABLE
+```
+```{r}
+paste0(round(TABLE,2),'%')
+annotation=paste0(round(TABLE,2),'%')
+```
+
+```{r}
+barplot(TABLE)
+```
+```{r}
+titleText2333='Percentage of Repeat Donors in Friends of WPC Nepal'
+sourceText2444='Based on Database from DonorPerfect'
+
+paomadeng=rainbow(length(TABLE)) 
+
+Position=barplot(TABLE,
+        col=paomadeng,
+        border=NA,
+        xlim=c(0,80),
+        main=titleText2333,
+        xlab = '(in %)',
+        horiz = T,
+        las=2)
+
+text(y=Position,x=TABLE, labels=annotation,
+      pos=4,
+      cex=0.8)
+title(sub=sourceText2444, adj=0,cex.sub=0.7,
+      line = 3) 
+```
+```{r}
+GGtable=as.data.frame(TABLE)
+names(GGtable)=c("Answer","percentage")
+GGtable
+```
+```{r}
+library(ggplot2)
+```
+```{r}
+base= ggplot(data = GGtable, 
+             aes(x = reorder(Answer, percentage),
+                 y = percentage)) 
+```
+
+```{r}
+plot1 = base + geom_bar(fill ="gray",
+                        stat = 'identity')
+plot1
+```
+```{r}
+plot2 = plot1 + labs(title=titleText2333,
+                     x =NULL, 
+                     y = NULL,
+                     caption = sourceText2444)
+plot3 = plot2 + geom_text(aes(y = percentage ,
+                            label = paste0(round(percentage,2), '%')),
+                        vjust=1,
+                        size = 3)
+plot3
+```
+
+```{r}
+GGtable1=GGtable[order(GGtable$percentage),]
+
+
+baseLLP = ggplot(GGtable1, aes(Answer,percentage)) 
+lolliplot2333=baseLLP + geom_segment(aes(y = 0, 
+                                   x = Answer, 
+                                   yend = percentage, 
+                                   xend = Answer), color = "gray") 
+lolliplot2444 = lolliplot2333 + geom_point()
+lolliplot2444 + scale_x_discrete(limits=GGtable1$Answer)
+```
+
+```{r}
+link1='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
+load(file=url(link1))
+summary(eduwa$Free.Lunch)
+```
+
+
+```{r}
+eduwa1=eduwa[complete.cases(eduwa$Free.Lunch),]
+dataHistFL=hist(eduwa1$Free.Lunch)
+```
+```{r}
+baseFL= ggplot(eduwa1,aes(x = Free.Lunch))  
+h1= baseFL + geom_histogram()
+h1 
+```
+```{r}
+dataHistFL
+```
+```{r}
+ggplot_build(h1)$data[[1]]
+```
+
+```{r}
+base1= ggplot(eduwa1,aes(x = Free.Lunch))  
+h1= base1 + geom_histogram(binwidth = 100,boundary=0) #changing width
+h1= h1 + stat_bin(binwidth = 100, aes(label=..count..), 
+                  geom = "text",boundary = 0,vjust=-0.2)
+h1
+```
+
+```{r}
+TitleText='Number of Free Lunch Being Provided by School'
+
+h2=h1+labs(title=TitleText,
+                     x ='Numbre of Free Lunch', 
+                     y = 'Freequency',
+            caption = 'U.S Department of Education')
+h2
+```
+```{r}
+h3 = h2 + theme(panel.background = element_rect(fill = "white",
+                                                    colour = "grey50"),
+                    plot.caption = element_text(hjust = 0), # default was 1
+                    plot.title = element_text(hjust = 0.5))
+h3
+```
+```{r}
+TSRatio=tapply(eduwa$Student.Teacher.Ratio, eduwa$County, mean,na.rm=T)
+TSRatio
+```
+
+
+```{r}
+DF_TSRatio=as.data.frame(TSRatio)
+```
+
+
+```{r}
+HS_TS=hist(TSRatio)
+
+```
+
+```{r}
+base5=ggplot(DF_TSRatio,aes(x = TSRatio))  
+hTS= base5 + geom_histogram()
+hTS
+```
+```{r}
+HS_TS
+```
+
+```{r}
+ggplot_build(hTS)$data[[1]]
+```
+```{r}
+hTS= base5 + geom_histogram(binwidth = 2,boundary=10) #changing width
+hTS1= hTS + stat_bin(binwidth = 2, aes(label=..count..), 
+                  geom = "text",boundary = 0,vjust=-0.3)
+hTS1
+```
+
+```{r}
+TITLE='CountyTeacher/Student Ratio within WA State'
+
+hTS2=hTS1+theme(panel.background = element_rect(fill = "white",
+                                                    colour = "grey50"),
+                    plot.caption = element_text(hjust = 0), # default was 1
+                    plot.title = element_text(hjust = 0.5))
+
+hTS2=hTS2 + labs(title=TITLE,
+                     x ='Teacher/Student Ratio', 
+                     y = 'Frequency',
+                     caption = 'U.S Department of Education')
+hTS2
+```
+
+```{r}
+DensityTS=base5+geom_density()
+DensityTS
+```
+
+```{r}
+DensityTS=DensityTS+geom_vline(aes(xintercept=mean(TSRatio)),
+            color="blue", linetype="dashed", size=1)
+DensityTS=DensityTS+geom_vline(aes(xintercept=median(TSRatio)),
+            color="red", linetype="dashed", size=1)
+DensityTS
+```
+```{r}
+linkc="https://github.com/EvansDataScience/data/raw/master/crime.RData"
+load(file = url(linkc))
+```
+
+```{r}
+library(magrittr)
+```
+
+
+```{r}
+(CrimeTotal1=table(crime$crimecat,crime$Occurred.DayTime))
+```
+
+
+```{r}
+df.Crime=as.data.frame(CrimeTotal1)
+colnames(df.Crime)=c('Crime','Daytime','Percent')
+#####
+
+base  = ggplot(df.C, aes(x = Crime, y = Percent ) ) 
+bars1 = base + geom_bar( stat = "identity" )
+bars2 = bars1 + facet_wrap( ~ Daytime ,nrow = 1) 
+bar3=bars2 + coord_flip()
+bar3
+```
+
+```{r}
+lolliplotC=base + geom_segment(aes(y = 0, 
+                                   x = Answer, 
+                                   yend = Percent, 
+                                   xend = Crime), color = "gray") 
+lolliplotC1 = lolliplotC + geom_point()
+lolliplotC1 + scale_x_discrete(limits=df.Crime$Percent)
+```
+
