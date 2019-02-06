@@ -198,9 +198,29 @@ $(document).ready(function () {
 <p>The data that is being used:</p>
 <pre class="r"><code>link=&quot;https://github.com/EvansDataScience/data/raw/master/crime.RData&quot;
 load(file = url(link))</code></pre>
-<pre class="r"><code>library(magrittr)
-
-(CrimeTotal=table(crime$crimecat,crime$Occurred.DayTime))</code></pre>
+<p>Crimes in Different Areas</p>
+<pre><code>##                            
+##                                day afternoon evening  night
+##   AGGRAVATED ASSAULT         3.282     3.447   4.104  6.456
+##   ARSON                      0.180     0.107   0.161  0.418
+##   BURGLARY                  22.229    14.319  11.866 13.842
+##   CAR PROWL                 24.624    24.588  35.794 29.987
+##   DISORDERLY CONDUCT         0.038     0.052   0.056  0.068
+##   DUI                        0.650     0.603   1.713  7.335
+##   FAMILY OFFENSE-NONVIOLENT  1.610     1.616   1.023  0.964
+##   GAMBLE                     0.004     0.003   0.006  0.002
+##   HOMICIDE                   0.038     0.030   0.041  0.113
+##   LIQUOR LAW VIOLATION       0.103     0.315   0.345  0.522
+##   LOITERING                  0.018     0.020   0.021  0.008
+##   NARCOTIC                   2.224     4.122   3.297  3.537
+##   PORNOGRAPHY                0.060     0.034   0.014  0.027
+##   PROSTITUTION               0.106     0.434   1.197  1.153
+##   RAPE                       0.306     0.204   0.297  0.735
+##   ROBBERY                    2.380     3.043   3.478  4.624
+##   SEX OFFENSE-OTHER          1.382     1.130   0.852  1.529
+##   THEFT                     35.626    41.674  32.756 24.453
+##   TRESPASS                   4.464     3.330   2.183  2.831
+##   WEAPON                     0.677     0.928   0.796  1.398</code></pre>
 </div>
 </div>
 

@@ -13,7 +13,10 @@ link="https://github.com/EvansDataScience/data/raw/master/crime.RData"
 load(file = url(link))
 ```
 
-```{r table_byCol,eval=FALSE}
+
+
+Crimes in Different Areas
+```{r table_byCol,eval=TRUE, echo=FALSE}
 library(magrittr)
 library(ggplot2)
 
