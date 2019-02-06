@@ -27,6 +27,8 @@ CrimeCol=table(crime$crimecat,crime$Occurred.DayTime)%>%
 CrimeCol
 ```
 
+Plot 1
+
 ```{r flip_facet, eval=TRUE, echo=FALSE}
 df.C=as.data.frame(CrimeCol)
 colnames(df.C)=c('Crime','Daytime','Percent')
