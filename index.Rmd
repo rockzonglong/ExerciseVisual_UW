@@ -1,7 +1,7 @@
 <br> 
 <center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
 
-## Visualization_Exercise 1
+## Visualization_Exercise 3
 
 ### By MPA Candidate  Long Zong
 
@@ -10,26 +10,28 @@ The data that is being used:
 
 ```{r}
 link="https://github.com/EvansDataScience/data/raw/master/crime.RData"
+```
+
+```{r table_byCol,eval=TRUE, echo=FALSE}
 load(file = url(link))
 ```
 
 
-
 Crimes in Different Areas
-```{r table_byCol,eval=TRUE, echo=FALSE}
+```{r,eval=TRUE, echo=FALSE}
 library(magrittr)
 library(ggplot2)
 
 CrimeCol=table(crime$crimecat,crime$Occurred.DayTime)%>%
-         prop.table(margin = 2)%>%   # 2 is % by column
+         prop.table(margin = 2)%>%  
          "*"(100)%>%
          round(3)
 CrimeCol
 ```
 
-Plot 1
+Making Bar Plot
 
-```{r flip_facet, eval=TRUE, echo=FALSE}
+```{r, eval=TRUE, echo=FALSE}
 df.C=as.data.frame(CrimeCol)
 colnames(df.C)=c('Crime','Daytime','Percent')
 #####
@@ -39,4 +41,32 @@ bars1 = base + geom_bar( stat = "identity" )
 bars2 = bars1 + facet_wrap( ~ Daytime ,nrow = 1) 
 bars2 + coord_flip()
 ```
+
+Making it into Loliplot
+
+```{r, eval=TRUE, echo=FALSE}
+base  = ggplot(df.C, aes(x = reorder(Crime, Percent), y = Percent ) ) 
+bars3 = base+geom_segment(aes(y = 0, x = reorder(Crime, Percent), xend =Crime, yend = Percent), color = "grey50")+geom_point()
+bars3+ facet_wrap( ~ Daytime ,nrow = 1)+ facet_wrap( ~ Daytime ,nrow = 1)+ coord_flip()
+```
+
+Making it into Heatplot
+
+```{r, eval=TRUE, echo=FALSE}
+base  = ggplot(df.C, aes(x = Daytime, y = reorder(Crime, -Percent), fill = Percent)) 
+heat1 = base +  geom_tile() 
+heat2 = heat1 +scale_fill_gradient(low = "yellow", 
+                                   high = "purple")
+heat3 = heat2 + theme_classic() 
+
+heat4 = heat3 + theme(axis.text.x = element_text(angle = 90, vjust = 0.6), 
+                      legend.title = element_blank(), #no title for legend
+                      legend.position="top", 
+                      legend.direction="horizontal",
+                      legend.key.width=unit(1, "cm"),
+                      legend.key.height=unit(1, "cm")) 
+
+heat4 + labs(y="Crime")
+```
+
 
