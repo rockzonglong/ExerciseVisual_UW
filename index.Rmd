@@ -68,5 +68,97 @@ heat4 = heat3 + theme(axis.text.x = element_text(angle = 90, vjust = 0.6),
 
 heat4 + labs(y="Crime")
 ```
+```{r, eval=TRUE, echo=FALSE}
+crimeY2000=crime[(crime$DaysToReport>=365) & (crime$year>=2000),]
+crimeY2000$YearsToReport=crimeY2000$DaysToReport/365
+
+crimeYearGG=crimeY2000[complete.cases(crimeY2000$YearsToReport),]
+
+base= ggplot(crimeYearGG,
+             aes(x = reorder(crimecat, YearsToReport, FUN = max), # reorder!
+                 y=YearsToReport)) 
+mins = base + stat_summary(fun.y=min,size=1,
+                           geom="line", linetype='dashed',show.legend = T,
+                           aes(group=1,col='Minimum'))
+minsMaxs= mins + stat_summary(fun.y=max,
+                              geom="line",size=1,show.legend = F,
+                              aes(group=1,col='Maximum'))
+minsMaxsMd= minsMaxs + stat_summary(fun.y=median, size=2,
+                                    geom="line",
+                                    aes(group=1,col='Median'))
+al=minsMaxsMd + scale_colour_manual(name="Trends",
+                                      values=c("blue", "black","red"))
+
+a2=al + labs(title="Reporting times vary by crime type in Seattle",
+                 x=NULL,
+                 y="Years taken to report crime",
+                 caption='Source: Seattle Police Department')
+
+a3=a2 + theme(axis.line=element_line(color='black'),
+                  axis.text.y=element_text(size=7),
+                  plot.margin=unit(c(0,.25,.5,.25),"cm"),
+                  panel.background=element_rect(fill='white'),
+                  panel.grid=element_line(color='gray80'),
+                   text=element_text(color='gray25'),
+                  plot.title=element_text(hjust=1,
+                                          size=18,
+                                          color='black',
+                                          margin=unit(c(.6,0,1,0),'cm')),
+                  plot.caption=element_text(size=8,
+                                            hjust=1.25,
+                                            margin=unit(c(.25,0,0,0),'cm')))
+
+a3 + coord_flip()
+```
+
+
+
+
+
+```{r, eval=TRUE, echo=FALSE}
+library(tibble)
+library(ggrepel)
+daysByNeigh=tapply(crime$DaysToReport, crime$Neighborhood, mean,na.rm=T)
+
+crimesByNeigh=tapply(crime$crimecat, crime$Neighborhood, length)%>%      
+                     prop.table()%>%
+                     "*"(100)%>% 
+                     round(2) 
+daysByNeigh=as.data.frame(daysByNeigh)%>%rownames_to_column()
+crimesByNeigh=as.data.frame(crimesByNeigh)%>%rownames_to_column()
+
+num_num=merge(daysByNeigh,crimesByNeigh)
+
+
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh)) 
+scatp1 = base +  stat_density_2d(aes(fill = ..density..), 
+                                 geom = "raster", contour = FALSE)
+scatp2=scatp1+geom_text_repel(aes(label=ifelse(crimesByNeigh>=5,
+                                               num_num$rowname, "")))
+scatp3 = scatp2 +  theme(legend.position='none') 
+scatp4= scatp3 + scale_fill_distiller(palette="Reds", direction=1)
+scatp5 = scatp4 +  scale_x_continuous(expand = c(0, 0)) + 
+         scale_y_continuous(expand = c(0, 0)) 
+scatp6 = scatp5 + labs(title="Downtown Has the Highest Crime Rates in the Region ",
+                       y='Share of crime (%)',
+                       x='Average days to report crime',
+                       caption='Source: Seattle Police Department')
+scatp7 = scatp6 + theme(plot.title=element_text(hjust=.6,
+                                          size=16,
+                                          face='bold',
+                                          color='black',
+                                          margin=unit(c(.25,0,1,0),'cm')),
+                        plot.margin=unit(c(0,1,.3,.3),"cm"),
+                        panel.background = element_rect(color='black'),
+                        axis.line=element_line(color='black'),
+                        text=element_text(color='gray25'),
+                        plot.caption=element_text(size=8,
+                                            hjust=1,
+                                            margin=unit(c(.25,0,0,0),'cm')))
+
+scatp7
+```
+
+
 
 
